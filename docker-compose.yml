@@ -1,0 +1,42 @@
+version: "3.7"
+services:
+  db:
+    image: percona
+    volumes:
+      - /data/srvaudit/db:/var/lib/mysql
+    env_file:
+      - .env
+  web:
+    image: srvaudit/srvaudit-web:release-1.0
+    volumes:
+      - /data/srvaudit/www:/var/www/srvaudit
+      - /data/certs:/etc/nginx/ssl
+    ports:
+      - mode: host
+        target: 443
+        published: 443
+        protocol: tcp
+      - mode: host
+        target: 80
+        published: 80
+        protocol: tcp
+    env_file:
+      - .env
+  php:
+    image: srvaudit/srvaudit-php:release-1.0
+    volumes:
+      - /data/srvaudit/www:/var/www/srvaudit
+      - /data/log/srvaudit.log:/usr/src/srvaudit/storage/logs/laravel.log
+    env_file:
+      - .env
+  redis:
+    image: redis
+  echo:
+    image: srvaudit/srvaudit-echo:release-1.0
+    volumes:
+      - /data/srvaudit/ssl:/ssl
+    ports:
+      - mode: host
+        target: 6001
+        published: 333
+        protocol: tcp

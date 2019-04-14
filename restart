@@ -1,0 +1,4 @@
+#!/bin/bash
+docker stack rm srvaudit
+sleep 10
+docker stack deploy -c docker-compose.yml srvaudit
